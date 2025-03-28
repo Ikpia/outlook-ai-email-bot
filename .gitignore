@@ -1,0 +1,4 @@
+*:Zone.Identifier
+backend/.env
+config/.env
+frontend/node_modules
