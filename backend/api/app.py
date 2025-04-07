@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from threading import Thread
 import re
 import string
 from pymongo import MongoClient
@@ -12,16 +11,14 @@ import os
 from bson import json_util
 from flask import Response
 from bson.objectid import ObjectId
-import json
 from dotenv import load_dotenv
 import requests
 from requests_oauthlib import OAuth2Session
-import torch
 from datetime import datetime, timezone, timedelta
-from transformers import GPT2Tokenizer, GPT2LMHeadModel, GPT2ForSequenceClassification, AutoModelForCausalLM, AutoTokenizer
 from celery import Celery
-from backend.database.mongo_connection import templates_collection, emails_collection, failed_responses_collection, scheduled_responses_collection
+from backend.database.mongo_connection import emails_collection, failed_responses_collection, scheduled_responses_collection
 from backend.services.generate_response import generate_email_response
+from backend.services.category import categorize_email
 from backend.scripts.approve_and_send import  approve_email
 
 # Load environment variables
@@ -36,18 +33,6 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 celery = Celery(app.name, broker=REDIS_URL, backend=REDIS_URL)
 
 
-# Set up the logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.propagate = False 
-
-import os
-
 # Microsoft Graph API Credentials
 GRAPH_API_URL = os.getenv("GRAPH_API_URL")
 SEND_MAIL_URL = os.getenv("SEND_MAIL_URL")
@@ -60,42 +45,26 @@ MICROSOFT_REDIRECT_URI = os.getenv("MICROSOFT_REDIRECT_URI", "http://localhost:5
 MICROSOFT_TOKEN_URL = os.getenv("MICROSOFT_TOKEN_URL")
 MICROSOFT_AUTH_URL = os.getenv("MICROSOFT_AUTH_URL")
 
+import os
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 #TOKEN_URL = f"https://login.microsoftonline.com/{MICROSOFT_TENANT_ID}/oauth2/v2.0/token"
 
 # OAuth2 Session
-scope = ["email", "openid", "profile", "https://graph.microsoft.com/Mail.Read", "https://graph.microsoft.com/Mail.ReadWrite", "https://graph.microsoft.com/Mail.Send"]
+scope = [
+  "openid",
+  "profile",
+  "email",
+  "https://graph.microsoft.com/User.Read",
+  "https://graph.microsoft.com/Mail.Read",
+  "https://graph.microsoft.com/Mail.ReadWrite",
+  "https://graph.microsoft.com/Mail.Send"
+  ]
 oauth = OAuth2Session(MICROSOFT_CLIENT_ID, redirect_uri=MICROSOFT_REDIRECT_URI, scope=scope)
-
-
-# Load Category Mappings
-with open("backend/models/category_mappings.json", "r") as f:
-    mappings = json.load(f)
-
-category_to_label = mappings["category_to_label"]
-label_to_category = {int(k): v for k, v in mappings["label_to_category"].items()}  # Convert keys back to int
-
-# Load Fine-Tuned Model & Tokenizer
-model_path = "backend/models/fine_tuned_gpt2_classifier"
-classify_email_tokenizer = GPT2Tokenizer.from_pretrained(model_path)
-category_model = GPT2ForSequenceClassification.from_pretrained(model_path)
 
 def extract_text_from_html(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
     return soup.get_text(separator="\n", strip=True)
-
-
-def classify_email(email_body):
-    """Categorize an email into predefined categories."""
-    inputs = classify_email_tokenizer(email_body, return_tensors="pt", truncation=True, padding="max_length", max_length=512)
-    
-    with torch.no_grad():
-        outputs = category_model(**inputs)
-        predicted_label = torch.argmax(outputs.logits, dim=-1).item()
-    
-    return label_to_category[predicted_label]
-
 
 
 def handle_failed_email(email, token):
@@ -138,7 +107,8 @@ celery.conf.beat_schedule["send-daily-failure-report"] = {
     "schedule": crontab(minute=0, hour=0),
 }
 
-def clean_text(text):
+def clean_text(html_content):
+    text = extract_text_from_html(html_content)
     # Remove non-printable characters
     text = "".join(char for char in text if char in string.printable)
     
@@ -164,72 +134,57 @@ def schedule_response():
     scheduled_responses_collection.insert_one({
          "category": category,
         "scheduled_hour": hour,
-        "scheduled_minute": minute
+        "scheduled_minute": minute,
+        "folder_name": folderName
     })
-
     token = oauth.token.get("access_token")
     if not token:
         return {"error": "Missing or expired access token"}
-    
-    """Manually trigger email fetching & categorization."""
-     # Run in background to prevent request from hanging
-    response = send_scheduled_responses(token, folderName)
-    
-    return jsonify({"message": "Scheduled responses processed", "details": response}), 201
-
-    #return jsonify({"message": "Response scheduled successfully"}), 201
-
-
-def send_scheduled_responses(token, folderName):
-    """Send responses at their scheduled time."""
-    now = datetime.now(timezone.utc)
-    current_hour, current_minute = now.hour, now.minute
-    print(now)
-
     folder_id = get_folder_id(folderName, token)
     if not folder_id:
         return {"error": "Folder not found."}
+    return jsonify({"message": "Scheduled responses processed"}), 201
 
-    scheduled_categories = scheduled_responses_collection.find({
-        "$or": [
-            {
-                "scheduled_hour": str(current_hour), 
-                "scheduled_minute": str(current_minute)
-            }, 
-            {
-                "end_hour": str(current_hour), 
-                "end_minute": str(current_minute)
-            }
-        ]
-    })
+
+@app.route("/respond", methods=["POST"])
+def respond():
+    data = request.json
+    category = data.get("category")
+    token = oauth.token.get("access_token")
+    if not token:
+        return {"error": "Missing or expired access token"}
+    response = send_scheduled_responses(token, category)
+    return jsonify({"message": response}), 201
+
+
+def send_scheduled_responses(token, category):
+    """Send responses at their scheduled time."""
+    scheduled_categories = scheduled_responses_collection.find({"category":category})
     scheduled_categories_list = list(scheduled_categories)
     print(f"Scheduled categories: {scheduled_categories_list}")
     processed_count = 0
 
     for category in scheduled_categories_list:
         print(f"Processing category: {category['category']}")
-        approved_emails = emails_collection.find({"category": category["category"], "status": "Approved"})
+        approved_emails = emails_collection.find({"category": category["category"], "status": "Categorized"})
         approved_emails_list = list(approved_emails)
         print(f"Found {len(approved_emails_list)} approved emails for category: {category['category']}")
 
         for email in approved_emails_list:
-            recipient_email = email.get("toRecipients", [{}])[0].get("emailAddress", {}).get("address", None)
-            subject = f"Re: {email['category']}"
-            body_content =  body_content = email.get("body", {}).get("content", "")
-            
+            body_content = email.get("body", {}).get("content", "")
             if not body_content:
                 print(f"Skipping email {email.get('id')} due to empty content.")
                 continue
-            body_content = clean_text(body_content)
+            #body_content = clean_text(body_content)
             print(body_content)
             response_text = generate_email_response(body_content)
             print(response_text)
-            success = send_email(recipient_email, subject, response_text, token)
-            print(success)
-            if success:
-                status = "Responded" if success else "Failed"
-                emails_collection.update_one({"id": email["id"]}, {"$set": {"status": status}})
-                save_email_to_folder(folder_id, recipient_email, subject, response_text, token)  # Store response
+            #success = send_email(recipient_email, subject, response_text, token)
+            #print(success)
+            if response_text:
+                status = "Responded" if response_text else "Failed"
+                emails_collection.update_one({"id": email["id"]}, {"$set": {"status": status, "ai_response": response_text}})
+                #save_email_to_folder(folder_id, recipient_email, subject, response_text, token)  # Store response
             else:
                 handle_failed_email(email, token)  # Call failure handler
             processed_count += 1
@@ -254,18 +209,6 @@ def send_email(recipient, subject, body, token ):
         return False
     return True
 
-# Generate AI Response API
-@app.route("/generate_response", methods=["POST"])
-def api_generate_response():
-    data = request.json
-    user_query = data.get("email_text", "")
-
-    if not user_query:
-        return jsonify({"error": "No email_text provided"}), 400
-
-    response = generate_email_response(user_query)
-    return jsonify({"response": response})
-
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Outlook AI Email Bot is running!"})
@@ -279,11 +222,6 @@ def auth():
 def callback():
     token = oauth.fetch_token(MICROSOFT_TOKEN_URL, client_secret=MICROSOFT_CLIENT_SECRET, authorization_response=request.url)
     return jsonify(token)
-
-@app.route("/emails", methods=["GET"])
-def get_emails():
-    emails = list(emails_collection.find({}, {"_id": 0}))  # Exclude MongoDB ID
-    return jsonify({"emails": emails})
 
 
 @app.route("/create_mail_folder", methods=["POST"])
@@ -323,6 +261,17 @@ def get_mail_folders():
     return jsonify({"error": "Failed to fetch mail folders", "details": response.json()}), response.status_code
 
 
+@app.route("/get-emails", methods=["GET"])
+def getemails():
+    emails_cursor = emails_collection.find({})
+    emails_list = list(emails_cursor)
+
+    if not emails_list:
+        return Response(json_util.dumps({"error": "No emails in Database"}), mimetype='application/json', status=404)
+
+    return Response(json_util.dumps(emails_list), mimetype='application/json')
+
+
 @app.route("/fetch-outlook-emails", methods=["GET"])
 def fetch_outlook_emails():
     token = oauth.token.get("access_token")
@@ -348,69 +297,20 @@ def fetch_and_categorize_emails(token):
         categorized_emails = []
         for email in emails:
             email_id = email.get("id")
-            body_content = extract_text_from_html(email.get("body", {}).get("content", ""))
+            body_content = clean_text(email.get("body", {}).get("content", ""))
             email["body"]["content"] = body_content
             print(body_content)
             # Check if the email already exists in MongoDB
             if not emails_collection.find_one({"id": email_id}):
-                category = classify_email(body_content)  # Use LLM to categorize
+                category = categorize_email(email["subject"])  # Use LLM to categorize
                 email["category"] = category  # Assign category
                 email["status"] = "Categorized"
+                email["ai_response"] = "Pending"
                 
                 # Save to MongoDB
                 emails_collection.insert_one(email)
             categorized_emails.append(email)
         
-        return {"message": "Emails categorized successfully", "emails": categorized_emails}
-
-    return {"error": "Failed to fetch emails", "details": response.json()}
-'''
-
-@app.route("/fetch-outlook-emails", methods=["GET"])
-def fetch_outlook_emails():
-    """Fetch emails from Outlook and categorize them."""
-    
-    # Extract token from request headers
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Unauthorized"}), 401
-
-    access_token = auth_header.split("Bearer ")[1]  # Extract token from "Bearer <token>"
-    
-    # Call function to fetch and categorize emails
-    result = fetch_and_categorize_emails(access_token)
-    
-    return Response(json_util.dumps(result), mimetype="application/json")
-
-
-def fetch_and_categorize_emails(token):
-    """Fetch Outlook emails and categorize them using LLM classification."""
-    if not token:
-        return {"error": "Missing or expired access token"}
-
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    response = requests.get(GRAPH_API_URL, headers=headers)
-
-    if response.status_code == 200:
-        emails = response.json().get("value", [])
-
-        categorized_emails = []
-        for email in emails:
-            email_id = email.get("id")
-            body_content = extract_text_from_html(email.get("body", {}).get("content", ""))
-            email["body"]["content"] = body_content
-
-            # Check if email already exists in MongoDB
-            if not emails_collection.find_one({"id": email_id}):
-                category = classify_email(body_content)  # LLM categorization
-                email["category"] = category  # Assign category
-                email["status"] = "Categorized"
-                
-                # Save to MongoDB
-                emails_collection.insert_one(email)
-
-            categorized_emails.append(email)
-
         return {"message": "Emails categorized successfully", "emails": categorized_emails}
 
     return {"error": "Failed to fetch emails", "details": response.json()}
@@ -444,8 +344,6 @@ def save_email_to_folder(folder_id, recipient_email, subject, response_text, tok
         "body": {"contentType": "Text", "content": response_text},
         "toRecipients": [{"emailAddress": {"address": recipient_email}}]
     }
-
-    response = requests.post(url, json=email_data, headers=headers)
 
     response = requests.post(url, headers=headers, json=email_data)
     
@@ -505,6 +403,17 @@ def move_responded_emails():
 
     return jsonify({"moved_emails": moved_emails})
 '''
+
+@app.route('/delete-email/<string:email_id>', methods=['DELETE'])
+def delete_email(email_id):
+
+    # Attempt to delete the document
+    result = emails_collection.delete_one({"id": email_id})
+
+    if result.deleted_count == 0:
+        return jsonify({"error": "Email not found"}), 404
+
+    return jsonify({"message": "Email deleted successfully"}), 200
 
 # Approve Email API
 @app.route("/approve_email/<email_id>", methods=["POST"])

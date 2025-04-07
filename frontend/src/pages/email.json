@@ -1,0 +1,659 @@
+[
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHwqmIP\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB8Kk0EwAAAA==",
+    "createdDateTime": "2025-04-04T05:48:03Z",
+    "lastModifiedDateTime": "2025-04-04T05:48:05Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHwqmIP",
+    "categories": [],
+    "receivedDateTime": "2025-04-04T05:48:03Z",
+    "sentDateTime": "2025-04-04T05:47:57Z",
+    "hasAttachments": false,
+    "internetMessageId": "<NH0D14CDTPU4.WVZ1677LHQVY@ph1pepf0001735d>",
+    "subject": "New app(s) connected to your Microsoft account",
+    "bodyPreview": "Microsoft account\r\nNew app(s) have access to your data\r\nOutlook Email Manager Backend connected to the Microsoft account ad**h@outlook.com.\r\nIf you didn't grant this access, please remove the app(s) from your account.\r\nManage your apps\r\nYou can also opt o",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQABakIMAhHZBEsiHSI26x9NE=",
+    "conversationIndex": "AQHbpSUhFqQgwCEdkESyIdIjbrH00Q==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB8Kk0EwAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Microsoft account New app(s) have access to your data Outlook Email Manager Backend connected to the Microsoft account ad**h@outlook.com . If you didn't grant this access, please remove the app(s) from your account. Manage your apps You can also opt out or change where you receive security notifications. Thanks, The Microsoft account team Privacy Statement Microsoft Corporation, One Microsoft Way, Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft account team",
+        "address": "account-security-noreply@accountprotection.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft account team",
+        "address": "account-security-noreply@accountprotection.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00e8cdeca0d0bfb9ccc07"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHwXRHH\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB8Fu4yQAAAA==",
+    "createdDateTime": "2025-04-02T16:47:39Z",
+    "lastModifiedDateTime": "2025-04-02T16:47:43Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHwXRHH",
+    "categories": [],
+    "receivedDateTime": "2025-04-02T16:47:40Z",
+    "sentDateTime": "2025-04-02T16:47:02Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000DDE0D050E5DFA51mscom_mkt_prod135@microsoftadvertising.microsoft.com>",
+    "subject": "REMINDER - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising",
+    "bodyPreview": "REMINDER - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌ ",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAGrKDAfnZMpEp3b56yLZOkQ=",
+    "conversationIndex": "AQHbo+7yasoMB+dkykSndvnrItk6RA==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB8Fu4yQAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "REMINDER - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising REMINDER - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising | View as webpage Webcast Turn AI into ROI with Microsoft Advertising Hello Samuel, Join us on April 3 when you will learn how to leverage AI-powered tools from Microsoft Advertising to enhance your marketing strategies, optimize your ad campaigns, and achieve better results with your time and budget. Our experts will guide you through practical insights and real-world examples to help you understand the tangible benefits of AI for your business. KEY TAKEAWAYS Maximize efficiency: Discover how AI can streamline your advertising processes and save you time. Well go into the ways you can use this powerful tool to increase efficiency, creativity, and performance across your campaigns. Improve targeting: Learn how to reach the right audience with precision using AI-driven insights. Boost ROI: See how AI can help you drive more conversions and increase ROAS not to mention increase the returns on your most valuable asset, time! Exclusive insights: Discover key insights from our latest Marketing Guide to Conversational AI guide, including emerging trends in conversational AI marketing, strategic campaign planning with AI, and building deeper connections with conversational advertising. REGISTER NOW Don't miss out on this opportunity to unlock the full potential of AI for your advertising efforts. Register now to secure your spot and start transforming your marketing today. When April 3, 2025 | 8:00 AM (PST) | 11:00 AM (EST) | 4:00 PM (GMT) | 5:00 PM (CET) Register now > LinkedIn Instagram Youtube RSS Please do not reply to this email, which was sent from an unmonitored mailbox. Please contact Microsoft Advertising if you have any questions. Copyright 2025 Microsoft Corporation. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00e9cdeca0d0bfb9ccc08"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4vSj\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk6AAAAA==",
+    "createdDateTime": "2025-03-31T21:21:14Z",
+    "lastModifiedDateTime": "2025-03-31T21:21:16Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4vSj",
+    "categories": [],
+    "receivedDateTime": "2025-03-31T21:21:14Z",
+    "sentDateTime": "2025-03-31T21:21:12Z",
+    "hasAttachments": false,
+    "internetMessageId": "<1743456071956.def6e20e-c1ce-4cfb-9525-bf3c10ce1747@bf56x.hubspotemail.net>",
+    "subject": "Will AI Replace Digital Marketers?",
+    "bodyPreview": "Plus, how you can use AI to change the game\r\nView in browser\r\n\r\n\r\n\r\nWill AI Replace Digital Marketers?\r\n\r\nThe Three Hard Truths Every Affiliate Needs To Know\r\n\r\n\r\n\r\nIt's 2025, and it seems there's some generative AI or Large Language Model (LLM) everywher",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAG7YzVqL6odBoClDyJWNHjA=",
+    "conversationIndex": "AQHbooLVbtjNWovqh0GgKUPIlY0eMA==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk6AAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Plus, how you can use AI to change the game View in browser Will AI Replace Digital Marketers? The Three Hard Truths Every Affiliate Needs To Know It's 2025, and it seems there's some generative AI or Large Language Model (LLM) everywhere you look. ChatGPT, DeepSeek, Jasper, you name itThese tools seem to be just as good (or at least quicker) at writing and creating images as humans, and marketers are starting to take notice. Given all of its strengths, it's only natural to start wondering how the rise of AI will affect the future of digital marketing. Will it replace digital marketers entirely, or is there some silver lining to the robot revolution? By clicking below, figure out exactly what it means for the future of digital marketers (AND your affiliate career). Read Full Article Here The Latest News On Affiliate Marketing and AI AI & Affiliate Marketing: A Match Made in Heaven How can you properly use AI to change how you do affiliate marketing forever? Get the answer from The Affiliate Marketing Dude. Watch Here The Game-Changing New AI Tool For Affiliates: Ember AI This brand-new AI tool is designed specifically for affiliate marketers. Harness the power of Ember AI and break through the competition! Read More ClickBank, 1444 S Entertainment Ave Suite 410, Boise, Idaho 83709 Unsubscribe Manage preferences"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "ClickBank",
+        "address": "team@clickbank.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "ClickBank",
+        "address": "team@clickbank.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "team@clickbank.com",
+          "address": "team@clickbank.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00ea9deca0d0bfb9ccc09"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4vC7\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk5wAAAA==",
+    "createdDateTime": "2025-03-31T20:29:54Z",
+    "lastModifiedDateTime": "2025-03-31T20:29:56Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4vC7",
+    "categories": [],
+    "receivedDateTime": "2025-03-31T20:29:55Z",
+    "sentDateTime": "2025-03-31T20:29:44Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000ECC77BE4735A172mscom_mkt_prod3@promomail.microsoft.com>",
+    "subject": "Get started developing generative AI applications",
+    "bodyPreview": "Explore learning resources and try Azure OpenAI Service.\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌  ",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAB7D8OF7NA5OnsSiCQjxXzk=",
+    "conversationIndex": "AQHbonupHsPw4Xs0Dk6exKIJCPFfOQ==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk5wAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Explore learning resources and try Azure OpenAI Service. View as a webpage Transform your applications with generative AI Many organizations are looking for innovative ways to use generative AI to gain a competitive edge. Take advantage of your Azure account to find the best AI solution for your organization. Get started with Azure OpenAI Service to tap into the full potential of language and image models including GPT-4o and DALLE. Seamless integration allows you to apply AI to a variety of business needs, such as generating realistic images and videos and enhancing customer experiences with AI-generated bots. Get started Learn how to build generative AI applications Get the skills you need to build innovative, market-ready, responsible generative AI applications in Azure AI Foundry. Start learning Drive business growth with Azure AI services Develop AI solutions with Azure OpenAI Service Automate creative processes to generate content and images. Build and deploy chat applications Empower employees with chatbots and virtual assistants. Run advanced AI models on your data Ground your data for greater accuracy and insights. Accelerate app development with prebuilt models Find the right model to build your custom AI solution. Manage Azure resources from your mobile device Azure portal Documentation Training Support Account information Subscription ID: e23aea56-f82c-4242-a329-987c1db19587 This email was sent from an unmonitored inbox. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00eb6deca0d0bfb9ccc0a"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4uzS\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk5gAAAA==",
+    "createdDateTime": "2025-03-31T19:06:40Z",
+    "lastModifiedDateTime": "2025-03-31T19:06:41Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHu4uzS",
+    "categories": [],
+    "receivedDateTime": "2025-03-31T19:06:40Z",
+    "sentDateTime": "2025-03-31T19:06:37Z",
+    "hasAttachments": false,
+    "internetMessageId": "<20250331190637.a25ac725a3362275@azns.microsoft.com>",
+    "subject": "Action required: Migrate to Azure Machine Learning SDK version 2 before 30 June 2026",
+    "bodyPreview": "Azure Machine Learning SDK version 1 will no longer be supported.\r\n\r\nMigrate to Azure Machine Learning SDK version 2 before 30 June 2026\r\n\r\nYou're receiving this notification because you're associated with one or more Azure subscriptions that use Azure Ma",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAGTXRZyqlMFOsxHVguRp19cA",
+    "conversationIndex": "AQHbonAIZNdFnKqUwU6zEdWC5GnX1w==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB7uFk5gAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Azure Machine Learning SDK version 1 will no longer be supported. Migrate to Azure Machine Learning SDK version 2 before 30 June 2026 You're receiving this notification because you're associated with one or more Azure subscriptions that use Azure Machine Learning SDK version 1. Starting on 30 June 2026 , Azure Machine Learning Software Development Kit version 1 (SDK v1) will no longer be supported. To avoid service disruptions, you'll need to migrate to Azure Machine Learning Software Development Kit version 2 (SDK v2) before that date. Azure Machine Learning SDK v2 offers new and improved features to accelerate machine learning production lifecycles, including managed inferencing, reusable pipeline components, and improved pipeline scheduling. We encourage you to migrate to SDK v2 before the end-of-support date to take advantage of the added benefits. In some cases, the command syntax of SDK v2 differs significantly from SDK v1. You can learn more about the differences in our documentation . Required action To avoid service disruptions, migrate to Azure Machine Learning SDK v2 before 30 June 2026. Help and support If you have questions, get answers from community experts in Microsoft Q&A . If you have a support plan and need technical help, open the Azure portal and select the question mark icon at the top of the page. Learn more about service retirements that may impact your resources in the Azure Retirement Workbook . Please note that retirements may not be visible in the workbook for up to two weeks after being announced. Account Information Subscription ID: e23aea56-f82c-4242-a329-987c1db19587 Subscription name: Azure subscription 1 Please help us improve our communication by telling us what you think about this email in a survey . This message from Microsoft is an important part of a program, service, or product that you or your company purchased or participates in. Microsoft respects your privacy. Please read our Privacy Statement . This is a mandatory service communication. To set your contact preferences for other communications, visit the Promotional Communications Manager . Microsoft Corporation, One Microsoft Way, Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "azure-noreply@microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "azure-noreply@microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "Claims & Disputes"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00ec7deca0d0bfb9ccc0b"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrf1pM\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfwAAAA==",
+    "createdDateTime": "2025-03-30T20:15:11Z",
+    "lastModifiedDateTime": "2025-03-30T21:59:24Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrf1pM",
+    "categories": [],
+    "receivedDateTime": "2025-03-30T20:15:11Z",
+    "sentDateTime": "2025-03-30T20:14:44Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000EC760C8471B3A2Cmscom_mkt_prod3@promomail.microsoft.com>",
+    "subject": "Here’s how to read your Azure bill",
+    "bodyPreview": "Understand your Azure bill with this five-minute tutorial.\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQABGkyKhFh-pHvUk69Pw3jic=",
+    "conversationIndex": "AQHbobBwEaTIqEWH+ke9STr0/DeOJw==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfwAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Understand your Azure bill with this five-minute tutorial. View as a webpage Learn about your Azure bill Your Azure consumption is billed monthly, at pay-as-you-go pricing rates. Your bill will be sent on the ninth day of each month for charges incurred in the prior calendar month. Understand your bill and how to verify the charges in this five-minute tutorial. Youll learn how to review your bill and compare invoiced charges to your daily Azure usage. Take the tutorial Learn more about Azure billing: See how to manage billing and monitor and control spending with Azure Cost Management and Billing tools. Understand the terms and descriptions on your monthly invoice. Estimate costs for Azure products with the pricing calculator . Get help with your bill through Azure support . Account information Subscription ID: e23aea56-f82c-4242-a329-987c1db19587 This email was sent from an unmonitored inbox. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry "
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00edadeca0d0bfb9ccc0c"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrftGc\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfgAAAA==",
+    "createdDateTime": "2025-03-26T20:24:29Z",
+    "lastModifiedDateTime": "2025-03-26T20:24:30Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrftGc",
+    "categories": [],
+    "receivedDateTime": "2025-03-26T20:24:29Z",
+    "sentDateTime": "2025-03-26T20:23:39Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000EB3DFE646B758EAmscom_mkt_prod3@promomail.microsoft.com>",
+    "subject": "Get expert Azure support for your business",
+    "bodyPreview": "Explore technical support plans to find the one that meets your needs.\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQADVPy1nhJe5DggshIQC23NAf",
+    "conversationIndex": "AQHbno0TNU/LWeEl7kOCCyEhttzQHw==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfgAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Explore technical support plans to find the one that meets your needs. View as a webpage Find the Azure support expert you need Whether youre just starting with Azure or already deploying business-critical workloads, Azure support plans connect you with the right expertise for your situation. Choose the plan that meets your needs. Compare plans Developer For individuals looking to quickly get started on Azure. Technical support is available during business hours with initial response times under eight business hours. Standard For teams running production applications, get 24x7 technical support with initial response times under one hour. Professional Direct For business-critical applications, your designated Azure expert provides guidance to help you build resilient and cost-effective solutions. In addition, 24x7 technical support with initial response times under one hour is included. Learn more with the Azure support FAQs or contact support with questions. Account information Subscription ID: e23aea56-f82c-4242-a329-987c1db19587 This email was sent from an unmonitored inbox. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Azure",
+        "address": "Azure@promomail.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": "General Inquiry",
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00edadeca0d0bfb9ccc0d"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrfsfb\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfQAAAA==",
+    "createdDateTime": "2025-03-26T16:24:54Z",
+    "lastModifiedDateTime": "2025-03-26T16:24:55Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHrfsfb",
+    "categories": [],
+    "receivedDateTime": "2025-03-26T16:24:54Z",
+    "sentDateTime": "2025-03-26T16:24:13Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000D7499090E32CDE5mscom_mkt_prod135@microsoftadvertising.microsoft.com>",
+    "subject": "CORRECTION - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising",
+    "bodyPreview": "CORRECTION - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAHR_mV-ykE9HljdI1xx9Mhc=",
+    "conversationIndex": "AQHbnmubdH6ZX/KQT0eWN0jXHH0yFw==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB631PfQAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "CORRECTION - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising CORRECTION - [REGISTER NOW] Turn AI into ROI with Microsoft Advertising | View as web page Webcast Turn AI into ROI with Microsoft Advertising Hello Samuel, Join us on April 3rd when you will learn how to leverage AI-powered tools from Microsoft Advertising to enhance your marketing strategies, optimize your ad campaigns, and achieve better results with your time and budget. Our experts will guide you through practical insights and real-world examples to help you understand the tangible benefits of AI for your business. KEY TAKEAWAYS Maximize efficiency: Discover how AI can streamline your advertising processes and save you time. Well go into the ways you can use this powerful tool to increase efficiency, creativity, and performance across your campaigns. Improve targeting: Learn how to reach the right audience with precision using AI-driven insights. Boost ROI: See how AI can help you drive more conversions and increase ROAS not to mention increase the returns on your most valuable asset, time! Exclusive insights: Discover key insights from our latest Marketing Guide to Conversational AI guide, including emerging trends in conversational AI marketing, strategic campaign planning with AI, and building deeper connections with conversational advertising. REGISTER NOW Don't miss out on this opportunity to unlock the full potential of AI for your advertising efforts. Register now to secure your spot and start transforming your marketing today. When April 3, 2025 | 8:00 AM (PST) | 11:00 AM (EST) | 4:00 PM (GMT) | 5:00 PM (CET) Register now > LinkedIn Instagram Youtube RSS Please do not reply to this email, which was sent from an unmonitored mailbox. Please contact Microsoft Advertising if you have any questions. Copyright 2025 Microsoft Corporation. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry 🔗"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00eeddeca0d0bfb9ccc0e"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHqOSfv\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB6jd24AAAAA==",
+    "createdDateTime": "2025-03-25T11:47:38Z",
+    "lastModifiedDateTime": "2025-03-25T11:47:40Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHqOSfv",
+    "categories": [],
+    "receivedDateTime": "2025-03-25T11:47:38Z",
+    "sentDateTime": "2025-03-25T11:47:33Z",
+    "hasAttachments": false,
+    "internetMessageId": "<VKR1J2UDQPU4.KFGIVV395RMT@sn1pepf0003b6f0>",
+    "subject": "New app(s) connected to your Microsoft account",
+    "bodyPreview": "Microsoft account\r\nNew app(s) have access to your data\r\nOutlook Email Manager connected to the Microsoft account ad**h@outlook.com.\r\nIf you didn't grant this access, please remove the app(s) from your account.\r\nManage your apps\r\nYou can also opt out or ch",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAF01at8Qh8ZLt-NYPjudgNw=",
+    "conversationIndex": "AQHbnXu0XTVq3xCHxku381g+O52A3A==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB6jd24AAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "Microsoft account New app(s) have access to your data Outlook Email Manager connected to the Microsoft account ad**h@outlook.com . If you didn't grant this access, please remove the app(s) from your account. Manage your apps You can also opt out or change where you receive security notifications. Thanks, The Microsoft account team Privacy Statement Microsoft Corporation, One Microsoft Way, Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft account team",
+        "address": "account-security-noreply@accountprotection.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft account team",
+        "address": "account-security-noreply@accountprotection.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry 🔹"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00effdeca0d0bfb9ccc0f"
+    }
+  },
+  {
+    "@odata.etag": "W/\"CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHqOQqY\"",
+    "id": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB6jd23wAAAA==",
+    "createdDateTime": "2025-03-24T16:30:04Z",
+    "lastModifiedDateTime": "2025-03-24T18:25:39Z",
+    "changeKey": "CQAAABYAAACheNcUIFBgSJN4gJ/rxKzZAAHqOQqY",
+    "categories": [],
+    "receivedDateTime": "2025-03-24T16:30:04Z",
+    "sentDateTime": "2025-03-24T16:29:48Z",
+    "hasAttachments": false,
+    "internetMessageId": "<AC7000000000D192CB70E2687FBmscom_mkt_prod135@microsoftadvertising.microsoft.com>",
+    "subject": "REMINDER - [REGISTER NOW] Learning Lab Live: Performance Max",
+    "bodyPreview": "REMINDER - [REGISTER NOW] Learning Lab Live: Performance Max\r\n͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏ ‌   ͏",
+    "importance": "normal",
+    "parentFolderId": "AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAuAAADd5183SfXsEuDTbNnNeQtngEAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAA",
+    "conversationId": "AQQkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgAQAMWWQumWjN9FjZB3fEQTgVE=",
+    "conversationIndex": "AQHbnNn/xZZC6ZaM30WNkHd8RBOBUQ==",
+    "isDeliveryReceiptRequested": null,
+    "isReadReceiptRequested": false,
+    "isRead": false,
+    "isDraft": false,
+    "webLink": "https://outlook.live.com/owa/?ItemID=AQMkADAwATM3ZmYAZS02MjFmLTc0ZGUtMDACLTAwCgBGAAADd5183SfXsEuDTbNnNeQtngcAoXjXFCBQYEiTeICf68Ss2QAAAgEMAAAAoXjXFCBQYEiTeICf68Ss2QAB6jd23wAAAA%3D%3D&exvsurl=1&viewmodel=ReadMessageItem",
+    "inferenceClassification": "other",
+    "body": {
+      "contentType": "html",
+      "content": "REMINDER - [REGISTER NOW] Learning Lab Live: Performance Max REMINDER - [REGISTER NOW] Learning Lab Live: Performance Max | View as webpage Webcast Learning Lab Live: Performance Max Hello Samuel, Join us for a Learning Lab Live session dedicated to Performance Max. Learn how you can work together with Microsofts AI to maximize conversions across Microsoft properties, all from a single campaign. Drive performance towards your goals: You provide the inputs to effectively reach audiences across the Microsoft Advertising Network. Simplify to uplevel your impact: Get back free time with one single hassle-free setup for multi-channel performance. Future-proof your business: Our industry-leading AI allows you to stay on top of consumer trends and stand strong against competitors. Sign up today! *Please note this webcast will be presented in English but you will be able to turn on live closed captions in the language of your choice. When March 25, 2025 | 8:00 AM (PST) | 11:00 AM (EST) | 3:00PM (GMT) | 4:00PM (CET) Register now > LinkedIn Instagram Youtube RSS Please do not reply to this email, which was sent from an unmonitored mailbox. Please contact Microsoft Advertising if you have any questions. Copyright 2025 Microsoft Corporation. Unsubscribe | Privacy Statement Microsoft Corporation,One Microsoft Way,Redmond, WA 98052"
+    },
+    "sender": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "from": {
+      "emailAddress": {
+        "name": "Microsoft Advertising",
+        "address": "Ads@microsoftadvertising.microsoft.com"
+      }
+    },
+    "toRecipients": [
+      {
+        "emailAddress": {
+          "name": "adekiitn4faith@outlook.com",
+          "address": "adekiitn4faith@outlook.com"
+        }
+      }
+    ],
+    "ccRecipients": [],
+    "bccRecipients": [],
+    "replyTo": [
+      {
+        "emailAddress": {
+          "name": "noreply",
+          "address": "replies@microsoft.com"
+        }
+      }
+    ],
+    "flag": {
+      "flagStatus": "notFlagged"
+    },
+    "category": {
+      "category": "General Inquiry"
+    },
+    "status": "Categorized",
+    "_id": {
+      "$oid": "67f00f0bdeca0d0bfb9ccc10"
+    }
+  }
+]
