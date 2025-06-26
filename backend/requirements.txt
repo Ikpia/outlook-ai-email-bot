@@ -1,33 +1,10 @@
-# Flask API & Web Server
 flask
-flask-cors
-gunicorn
-
-# MongoDB Database
+flask_cors
 pymongo
-
-# Email Categorization & GPT-2 Response Generation
-transformers
-torch
-
-# Microsoft Graph API for Outlook Integration
+dotenv
 requests
-msal
-
-# Task Queue & Scheduling (Celery + Redis)
+requests_oauthlib
 celery
-redis
-
-# Background Jobs & Scheduling
-apscheduler
-
-# Environment Variable Management
-python-dotenv
-
-# Data Handling
+bs4
 pandas
-openpyxl
-
-datasets
-scikit-learn 
-
+transformers

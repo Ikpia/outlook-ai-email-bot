@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import re
 import string
-from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 from celery import shared_task, chain
-import logging
+from collections import Counter
 from bs4 import BeautifulSoup
 from celery.schedules import crontab
 import os
@@ -26,11 +26,11 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Celery Configuration
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-celery = Celery(app.name, broker=REDIS_URL, backend=REDIS_URL)
+#REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+#celery = Celery(app.name, broker=REDIS_URL, backend=REDIS_URL)
 
 
 # Microsoft Graph API Credentials
@@ -88,7 +88,7 @@ def notify_team_member(recipient, category, token):
     send_email(admin_email, subject, body, token)
 
 
-
+'''
 @celery.task
 def send_failure_report():
     """Generate a daily failure report and send it to the team."""
@@ -106,7 +106,7 @@ celery.conf.beat_schedule["send-daily-failure-report"] = {
     "task": "send_failure_report",
     "schedule": crontab(minute=0, hour=0),
 }
-
+'''
 def clean_text(html_content):
     text = extract_text_from_html(html_content)
     # Remove non-printable characters
@@ -150,47 +150,58 @@ def schedule_response():
 def respond():
     data = request.json
     category = data.get("category")
-    token = oauth.token.get("access_token")
+    folder = data.get("folder")
+    #name = data.get("name")
+    '''token = oauth.token.get("access_token")
     if not token:
-        return {"error": "Missing or expired access token"}
-    response = send_scheduled_responses(token, category)
+        return {"error": "Missing or expired access token"}'''
+    #response = send_scheduled_responses(category, folder, name)
+    response = send_scheduled_responses(category, folder)
     return jsonify({"message": response}), 201
 
 
-def send_scheduled_responses(token, category):
+def send_scheduled_responses(category, folder):
     """Send responses at their scheduled time."""
-    scheduled_categories = scheduled_responses_collection.find({"category":category})
-    scheduled_categories_list = list(scheduled_categories)
-    print(f"Scheduled categories: {scheduled_categories_list}")
+    approved_emails = emails_collection.find({"category": {"category": category}, "status": "Categorized"})
+    approved_emails_list = list(approved_emails)
+    #print(approved_emails_list)
+    print(f"Found {len(approved_emails_list)} approved emails for category: {category}")
     processed_count = 0
 
-    for category in scheduled_categories_list:
-        print(f"Processing category: {category['category']}")
-        approved_emails = emails_collection.find({"category": category["category"], "status": "Categorized"})
-        approved_emails_list = list(approved_emails)
-        print(f"Found {len(approved_emails_list)} approved emails for category: {category['category']}")
-
-        for email in approved_emails_list:
-            body_content = email.get("body", {}).get("content", "")
-            if not body_content:
-                print(f"Skipping email {email.get('id')} due to empty content.")
-                continue
-            #body_content = clean_text(body_content)
-            print(body_content)
-            response_text = generate_email_response(body_content)
-            print(response_text)
-            #success = send_email(recipient_email, subject, response_text, token)
-            #print(success)
-            if response_text:
-                status = "Responded" if response_text else "Failed"
-                emails_collection.update_one({"id": email["id"]}, {"$set": {"status": status, "ai_response": response_text}})
-                #save_email_to_folder(folder_id, recipient_email, subject, response_text, token)  # Store response
-            else:
-                handle_failed_email(email, token)  # Call failure handler
-            processed_count += 1
+    for email in approved_emails_list:
+        body_content = email.get("body", {}).get("content", "")
+        print(body_content)
+        if not body_content:
+            print(f"Skipping email {email.get('id')} due to empty content.")
+            continue
+        #body_content = clean_text(body_content)
+        print(body_content)
+        response_text = generate_email_response(body_content)
+        print(response_text)
+        #success = send_email(recipient_email, subject, response_text, token)
+        #print(success)
+        if response_text:
+            status = "Responded" if response_text else "Failed"
+            emails_collection.update_one({"id": email["id"]}, {"$set": {"status": status, "ai_response": response_text, "folder": folder}})
+            #save_email_to_folder(folder_id, recipient_email, subject, response_text, token)  # Store response
+        else:
+            print("email failed")#handle_failed_email(email, token)  # Call failure handler
+        processed_count += 1
 
     return {"message": f"Processed {processed_count} scheduled responses"}
 
+
+@app.route("/edit_ai_response/<email_id>", methods=["POST"])
+def edit_ai_response(email_id):
+    data = request.json
+    ai_response = data.get("response")
+    response = edit_response(email_id, ai_response)
+    return jsonify({"message": response}), 201
+
+def edit_response(email_id, ai_response):
+    """Update response"""
+    emails_collection.update_one({"id": email_id}, {"$set": {"ai_response": ai_response}})
+    return {"message": f"Edited {email_id} response"}
 
 def send_email(recipient, subject, body, token ):
     #token = oauth.token["access_token"]
@@ -293,27 +304,52 @@ def fetch_and_categorize_emails(token):
 
     if response.status_code == 200:
         emails = response.json().get("value", [])
-
         categorized_emails = []
+
         for email in emails:
             email_id = email.get("id")
+
             body_content = clean_text(email.get("body", {}).get("content", ""))
             email["body"]["content"] = body_content
-            print(body_content)
-            # Check if the email already exists in MongoDB
-            if not emails_collection.find_one({"id": email_id}):
-                category = categorize_email(email["subject"])  # Use LLM to categorize
-                email["category"] = category  # Assign category
-                email["status"] = "Categorized"
-                email["ai_response"] = "Pending"
-                
-                # Save to MongoDB
+
+            # Check if already exists
+            if emails_collection.find_one({"id": email_id}):
+                print("Skip duplicates")
+                continue
+
+            category = categorize_email(email["subject"])
+            email["category"] = category
+            email["status"] = "Categorized"
+            email["ai_response"] = "Pending"
+            email["folder"] = "Pending"
+
+            try:
                 emails_collection.insert_one(email)
-            categorized_emails.append(email)
-        
+                categorized_emails.append(email)
+            except DuplicateKeyError:
+                print(f"Duplicate email skipped: {email_id}")
+
+
+
+        # Assume you have a list of dictionaries
+        data = emails_collection.find({})
+
+        # Extract the IDs from the dictionaries
+        ids = [d.get("id") for d in data if "id" in d]
+
+        # Count the occurrences of each ID
+        id_counts = Counter(ids)
+
+        # Get the IDs that occur more than once
+        duplicates = [id for id, count in id_counts.items() if count > 1]
+
+        print("Duplicate IDs:", duplicates)
+
+
         return {"message": "Emails categorized successfully", "emails": categorized_emails}
 
     return {"error": "Failed to fetch emails", "details": response.json()}
+
 
 
 def get_folder_id(folder_name, token):
@@ -328,81 +364,205 @@ def get_folder_id(folder_name, token):
             if folder["displayName"].lower() == folder_name.lower():
                 return folder["id"]
     
-    print(f"⚠️ Folder '{folder_name}' not found.")
+    print(f"⚠ Folder '{folder_name}' not found.")
     return None
 
+@app.route("/emails/reject", methods=["POST"])
+def reject_action():
+    data = request.json
+    email_ids = data.get("email_ids")
+    for eid in email_ids:
+        emails_collection.update_one({"id": eid}, {"$set": {"status": "Rejected"}})
 
-def save_email_to_folder(folder_id, recipient_email, subject, response_text, token):
-    url = f"https://graph.microsoft.com/v1.0/me/mailFolders/{folder_id}/messages"
+    return jsonify({"message": f"Batch rejection complete for {len(email_ids)} emails."})
+
+@app.route("/emails/flag", methods=["POST"])
+def flag_action():
+    data = request.json
+    email_ids = data.get("email_ids")
+    for eid in email_ids:
+        emails_collection.update_one({"id": eid}, {"$set": {"status": "Follow-up"}})
+
+    return jsonify({"message": f"Batch flag complete for {len(email_ids)} emails."})
+
+
+@app.route("/approve-emails/by-category", methods=["POST"])
+def approve_by_category():
+    token = oauth.token.get("access_token")
+    if not token:
+        return {"error": "Missing or expired access token"}, 401
+
+    data = request.get_json()
+    category = data.get("category")
+
+    if not category:
+        return {"error": "No category specified"}, 400
+
+    # Find all emails in the specified category that are not yet moved
+    emails = list(emails_collection.find({
+        "category": category,
+        "status": "Responded"  # Only approve emails not yet processed
+    }))
+
+    if not emails:
+        return {"message": f"No pending emails found for category '{category}'"}, 200
+
+    results = {"approved": [], "errors": []}
+
+    for email in emails:
+        email_id = email["id"]
+        try:
+            recipient_email = email["toRecipients"][0]["emailAddress"]["address"]
+        except (IndexError, KeyError):
+            results["errors"].append({"id": email_id, "error": "Recipient email not found"})
+            continue
+
+        folder_name = email["folder"]
+        folder_id = get_folder_id(folder_name, token)
+        response_text = email.get("ai_response")
+
+        if not response_text:
+            results["errors"].append({"id": email_id, "error": "AI response not found"})
+            continue
+
+        result = save_email_to_folder(
+            folder_id=folder_id,
+            recipient_email=recipient_email,
+            subject=email["subject"],
+            response_text=response_text,
+            token=token,
+            email_id=email_id
+        )
+
+        if isinstance(result, tuple) and result[1] != 200:
+            results["errors"].append({"id": email_id, "error": result[0].json.get("error", "Unknown error")})
+        elif result.get_json().get("success"):
+            results["approved"].append(email_id)
+        else:
+            results["errors"].append({"id": email_id, "error": result.get_json().get("error", "Unknown error")})
+
+    return jsonify(results)
+
+
+@app.route("/approve-emails/batch", methods=["POST"])
+def approve_batch():
+    token = oauth.token.get("access_token")
+    if not token:
+        return {"error": "Missing or expired access token"}, 401
+
+    data = request.get_json()
+    email_ids = data.get("email_ids", [])
+
+    if not email_ids:
+        return {"error": "No email IDs provided"}, 400
+
+    results = {"approved": [], "errors": []}
+
+    for email_id in email_ids:
+        email = emails_collection.find_one({"id": email_id})
+        if not email:
+            results["errors"].append({"id": email_id, "error": "Email not found"})
+            continue
+
+        try:
+            recipient_email = email["toRecipients"][0]["emailAddress"]["address"]
+        except (IndexError, KeyError):
+            results["errors"].append({"id": email_id, "error": "Recipient email not found"})
+            continue
+
+        folder_name = email["folder"]
+        folder_id = get_folder_id(folder_name, token)
+
+        response_text = email.get("ai_response")
+        if not response_text:
+            results["errors"].append({"id": email_id, "error": "AI response not found"})
+            continue
+
+        result = save_email_to_folder(
+            folder_id=folder_id,
+            recipient_email=recipient_email,
+            subject=email["subject"],
+            response_text=response_text,
+            token=token,
+            email_id=email_id
+        )
+
+        if isinstance(result, tuple) and result[1] != 200:
+            results["errors"].append({"id": email_id, "error": result[0].json.get("error", "Unknown error")})
+        elif result.get_json().get("success"):
+            results["approved"].append(email_id)
+        else:
+            results["errors"].append({"id": email_id, "error": result.get_json().get("error", "Unknown error")})
+
+    return jsonify(results)
+
+
+
+@app.route("/approve-emails/<email_id>", methods=["POST"])
+def approve(email_id):
+    token = oauth.token.get("access_token")
+    if not token:
+        return {"error": "Missing or expired access token"}
+    
+    email = emails_collection.find_one({"id": email_id})
+    if not email:
+        return {"error": "Email not found"}
+    folderName = email["folder"]
+
+    # Ensure there is at least one recipient
+    try:
+        recipient_email = email["toRecipients"][0]["emailAddress"]["address"]
+    except (IndexError, KeyError):
+        return {"error": "Recipient email not found"}
+
+    result = save_email_to_folder(
+        folder_id=get_folder_id(folderName, token),
+        recipient_email=recipient_email,
+        subject=email["subject"],
+        response_text=email["ai_response"],
+        token=token,
+        email_id=email_id
+    )
+    return result
+
+def find_sent_message(subject, recipient, token):
+    url = f"https://graph.microsoft.com/v1.0/me/mailFolders/SentItems/messages?$top=10"
+    headers = {"Authorization": f"Bearer {token}"}
+    res = requests.get(url, headers=headers)
+    if res.status_code == 200:
+        for msg in res.json().get("value", []):
+            if msg["subject"] == subject and recipient in str(msg.get("toRecipients", "")):
+                return msg["id"]
+    return None
+
+def move_message_to_folder(message_id, destination_folder_id, token):
+    url = f"https://graph.microsoft.com/v1.0/me/messages/{message_id}/move"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
-    
-    email_data = {
-        "subject": subject,
-        "body": {"contentType": "Text", "content": response_text},
-        "toRecipients": [{"emailAddress": {"address": recipient_email}}]
-    }
+    data = {"destinationId": destination_folder_id}
+    res = requests.post(url, headers=headers, json=data)
+    return res.status_code == 200
 
-    response = requests.post(url, headers=headers, json=email_data)
-    
-    if response.status_code == 201:
-        print(f"✅ Email saved to folder {folder_id} successfully.")
-        return True
-    else:
-        print(f"❌ Failed to save email: {response.text}")
-        return False
+def save_email_to_folder(folder_id, recipient_email, subject, response_text, token, email_id):
+    print(response_text)
+    response = response_text["response"]
+    print(response)
+    email = send_email(recipient_email, subject, response, token)
+    if email == True:
+        emails_collection.update_one({"id": email_id}, {"$set": {"status": "Moved"}})
+        message_id = find_sent_message(subject, recipient_email, token)
+        if not message_id:
+            return jsonify({"error": "Sent message not found"}), 404
 
-
-'''
-def move_email_to_folder(email_id, folder_name):
-    """Move an email to a different Outlook folder."""
-    move_url = f"https://graph.microsoft.com/v1.0/me/messages/{email_id}/move"
-    token = oauth.token.get("access_token")
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    
-    # Find folder ID
-    folders_url = "https://graph.microsoft.com/v1.0/me/mailFolders"
-    folder_response = requests.get(folders_url, headers=headers)
-    if folder_response.status_code == 200:
-        folders = folder_response.json().get("value", [])
-        folder_id = next((f["id"] for f in folders if f["displayName"] == folder_name), None)
-
-        if not folder_id:
-            return f"Folder '{folder_name}' not found."
-        
-        move_data = {"destinationId": folder_id}
-        response = requests.post(move_url, json=move_data, headers=headers)
-        
-        if response.status_code == 201:
-            emails_collection.update_one({"id": email_id}, {"$set": {"status": "Moved"}})
-            return f"Email {email_id} moved to {folder_name}."
+        if move_message_to_folder(message_id, folder_id, token):
+            return jsonify({"success": True, "message": "Email sent and moved successfully"})
         else:
-            return f"Error moving email: {response.text}"
+            return jsonify({"error": "Failed to move email"}), 500
     else:
-        return f"Error fetching folders: {folder_response.text}"
+        return jsonify({"error": "Failed to send email"}), 500
 
-
-@app.route("/move-responded-emails", methods=["POST"])
-def move_responded_emails():
-    """Move all responded emails to a specific folder."""
-    folder_name = request.json.get("folder_name")
-
-    if not all([folder_name]):
-        return jsonify({"error": "Missing required field"}), 400
-    token = oauth.token.get("access_token")
-    # Fetch responded emails from MongoDB
-    responded_emails = emails_collection.find({"status": "Responded"})
-
-    moved_emails = []
-    for email in responded_emails:
-        email_id = email["id"]
-        result = move_email_to_folder(email_id, folder_name)
-        moved_emails.append({"email_id": email_id, "result": result})
-
-    return jsonify({"moved_emails": moved_emails})
-'''
 
 @app.route('/delete-email/<string:email_id>', methods=['DELETE'])
 def delete_email(email_id):
