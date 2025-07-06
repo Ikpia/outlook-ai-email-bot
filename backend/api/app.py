@@ -194,9 +194,15 @@ def send_scheduled_responses(category, folder):
 @app.route("/edit_ai_response/<email_id>", methods=["POST"])
 def edit_ai_response(email_id):
     data = request.json
-    ai_response = data.get("response")
+    print(f"Received data: {data}")
+
+    ai_response = data.get("ai_response") if data else None
+    if not ai_response:
+        print("No response provided in request.")
+        return jsonify({"error": "Missing 'response' field"}), 400
+
     response = edit_response(email_id, ai_response)
-    return jsonify({"message": response}), 201
+    return jsonify(response), 201
 
 def edit_response(email_id, ai_response):
     """Update response"""
@@ -305,46 +311,28 @@ def fetch_and_categorize_emails(token):
     if response.status_code == 200:
         emails = response.json().get("value", [])
         categorized_emails = []
+        seen_ids = set()
 
         for email in emails:
             email_id = email.get("id")
-
-            body_content = clean_text(email.get("body", {}).get("content", ""))
-            email["body"]["content"] = body_content
-
-            # Check if already exists
-            if emails_collection.find_one({"id": email_id}):
-                print("Skip duplicates")
+            if not email_id or email_id in seen_ids:
                 continue
+            seen_ids.add(email_id)
 
-            category = categorize_email(email["subject"])
-            email["category"] = category
+            email["body"]["content"] = clean_text(email.get("body", {}).get("content", ""))
+            email["category"] = categorize_email(email.get("subject", ""))
             email["status"] = "Categorized"
             email["ai_response"] = "Pending"
             email["folder"] = "Pending"
 
-            try:
-                emails_collection.insert_one(email)
+            result = emails_collection.update_one(
+                {"id": email_id},
+                {"$setOnInsert": email},
+                upsert=True
+            )
+
+            if result.upserted_id:
                 categorized_emails.append(email)
-            except DuplicateKeyError:
-                print(f"Duplicate email skipped: {email_id}")
-
-
-
-        # Assume you have a list of dictionaries
-        data = emails_collection.find({})
-
-        # Extract the IDs from the dictionaries
-        ids = [d.get("id") for d in data if "id" in d]
-
-        # Count the occurrences of each ID
-        id_counts = Counter(ids)
-
-        # Get the IDs that occur more than once
-        duplicates = [id for id, count in id_counts.items() if count > 1]
-
-        print("Duplicate IDs:", duplicates)
-
 
         return {"message": "Emails categorized successfully", "emails": categorized_emails}
 
@@ -547,7 +535,7 @@ def move_message_to_folder(message_id, destination_folder_id, token):
 
 def save_email_to_folder(folder_id, recipient_email, subject, response_text, token, email_id):
     print(response_text)
-    response = response_text["response"]
+    response = response_text.get("response", "") if isinstance(response_text, dict) else response_text
     print(response)
     email = send_email(recipient_email, subject, response, token)
     if email == True:
@@ -574,13 +562,13 @@ def delete_email(email_id):
         return jsonify({"error": "Email not found"}), 404
 
     return jsonify({"message": "Email deleted successfully"}), 200
-
+'''
 # Approve Email API
 @app.route("/approve_email/<email_id>", methods=["POST"])
 def api_approve_email(email_id):
     approve_email(email_id)
     return jsonify({"message": "Email Approved!"})
-
+'''
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

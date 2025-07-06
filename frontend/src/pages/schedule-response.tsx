@@ -61,6 +61,7 @@ export const ScheduleResponsePage: React.FC = () => {
 
   // 3. User clicks “Schedule”: validate, compute diff, start countdown + persist via schedule_email
   const startTimer = (idx: number) => {
+    console.log('startTimer called for idx:', idx, 'category:', cats[idx].category);
     setCats((prev) => {
       const c = prev[idx]
       const h = parseInt(c.hour, 10)
