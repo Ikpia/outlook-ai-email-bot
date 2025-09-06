@@ -20,6 +20,8 @@ from backend.database.mongo_connection import emails_collection, failed_response
 from backend.services.generate_response import generate_email_response
 from backend.services.category import categorize_email
 from backend.scripts.approve_and_send import  approve_email
+from pydantic import BaseModel
+
 
 # Load environment variables
 load_dotenv()
@@ -61,6 +63,17 @@ scope = [
   "https://graph.microsoft.com/Mail.Send"
   ]
 oauth = OAuth2Session(MICROSOFT_CLIENT_ID, redirect_uri=MICROSOFT_REDIRECT_URI, scope=scope)
+
+class EmailRequest(BaseModel):
+    text: str
+
+from typing import Optional
+
+class EmailResponse(BaseModel):
+    to: Optional[str] = None
+    subject: Optional[str] = None
+    body: Optional[str] = None
+    error: Optional[str] = None
 
 def extract_text_from_html(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
@@ -176,7 +189,10 @@ def send_scheduled_responses(category, folder):
             continue
         #body_content = clean_text(body_content)
         print(body_content)
-        response_text = generate_email_response(body_content)
+        prompt = {
+            "text": body_content
+        } 
+        response_text = generate_email_response(EmailRequest(**prompt))
         print(response_text)
         #success = send_email(recipient_email, subject, response_text, token)
         #print(success)

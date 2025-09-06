@@ -8,3 +8,5 @@ celery
 bs4
 pandas
 transformers
+pydantic
+groq
