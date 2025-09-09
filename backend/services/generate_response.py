@@ -20,6 +20,12 @@ MONGO_URI = os.getenv("MONGO_URI")
 # --------------------
 # MONGO CONNECTION
 # --------------------
+
+print(f"[DEBUG] Trying MongoDB URI: {MONGO_URI}")
+mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
+mongo_client.admin.command("ping")
+print(f"✅ Connected to MongoDB at {MONGO_URI}")
+'''
 if not MONGO_URI:
     try_uris = ["mongodb://localhost:27017", "mongodb://127.0.0.1:27017"]
 else:
@@ -38,10 +44,15 @@ for uri in try_uris:
 
 if not mongo_client:
     raise Exception("❌ Failed to connect to MongoDB on all URIs")
-
+'''
 db_clients = mongo_client.get_database("companyData")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@company.com")
-
+print("[DEBUG] DBs:", mongo_client.list_database_names())
+print("[DEBUG] Using DB:", db_clients.name)
+cols = db_clients.list_collection_names()
+print("[DEBUG] Collections:", cols)
+for c in cols:
+    print(f"[DEBUG] {c} count:", db_clients[c].count_documents({}))
 # --------------------
 # FASTAPI APP
 # --------------------
@@ -313,7 +324,8 @@ class EmailResponse(BaseModel):
 
 def generate_email_response(req: EmailRequest):
     print(f"[DEBUG] Prompt: {req.text}")
-
+    if len(req.text) > 200:
+        return EmailResponse(error="Prompt too long, max 200 characters")
     schema = get_enhanced_schema()
     llm_query = get_llm_query_enhanced(req.text, schema)
     if not llm_query:
@@ -358,13 +370,13 @@ def generate_email_response(req: EmailRequest):
     )
 '''
 prompt = {
-  "text": "My ID is ID-1026 can you give me more information on my test? Many thanks."
+  "text": "Can you please give me the information for the vehicle with a VIN: HQ0S3U42R8K7FOYPP Many thanks, Bob"
 }
-'''
+
 
 #"Can you please give me the information for the vehicle with a VIN: HQ0S3U42R8K7FOYPP Many thanks, Bob"
-#print(generate_email_response(EmailRequest(**prompt)))
-
+print(generate_email_response(EmailRequest(**prompt)))
+'''
 # --------------------
 # RUN APP
 # --------------------

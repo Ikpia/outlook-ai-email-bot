@@ -192,21 +192,40 @@ def send_scheduled_responses(category, folder):
         prompt = {
             "text": body_content
         } 
-        response_text = generate_email_response(EmailRequest(**prompt))
-        print(response_text)
+        response_obj = generate_email_response(EmailRequest(**prompt))
+        print(response_obj)
+        if hasattr(response_obj, "model_dump"):
+            response_dict = response_obj.model_dump()
+        else:
+            # Pydantic v1 fallback
+            response_dict = response_obj.dict()
+
+        # Decide status based on error
+        status = "Failed" if response_dict.get("error") else "Responded"
+
+        emails_collection.update_one(
+            {"id": email["id"]},
+            {"$set": {
+                "status": status,
+                "ai_response": response_dict,   # <-- dict, safe for Mongo
+                "folder": folder
+            }}
+        )
         #success = send_email(recipient_email, subject, response_text, token)
         #print(success)
+        '''
         if response_text:
             status = "Responded" if response_text else "Failed"
             emails_collection.update_one({"id": email["id"]}, {"$set": {"status": status, "ai_response": response_text, "folder": folder}})
             #save_email_to_folder(folder_id, recipient_email, subject, response_text, token)  # Store response
         else:
             print("email failed")#handle_failed_email(email, token)  # Call failure handler
+        '''
         processed_count += 1
 
     return {"message": f"Processed {processed_count} scheduled responses"}
 
-
+'''
 @app.route("/edit_ai_response/<email_id>", methods=["POST"])
 def edit_ai_response(email_id):
     data = request.json
@@ -224,6 +243,65 @@ def edit_response(email_id, ai_response):
     """Update response"""
     emails_collection.update_one({"id": email_id}, {"$set": {"ai_response": ai_response}})
     return {"message": f"Edited {email_id} response"}
+'''
+
+def _normalize_ai_response_payload(data):
+    """
+    Accepts any of:
+      { "ai_response": "text" }
+      { "ai_response": {to?, subject?, body?, error?, response?} }
+      { "response": "text" }          # legacy
+      { to?, subject?, body?, error? } # direct
+    Returns (dict_or_none, error_or_none)
+    """
+    if not data:
+        return None, "Missing JSON body"
+
+    payload = data.get("ai_response", data)  # prefer nested; else assume direct
+
+    # String -> body
+    if isinstance(payload, str):
+        return {"body": payload}, None
+
+    # Dict -> pick fields; support legacy 'response'
+    if isinstance(payload, dict):
+        body = payload.get("body") or payload.get("response")
+        norm = {
+            "to": payload.get("to"),
+            "subject": payload.get("subject"),
+            "body": body,
+            "error": payload.get("error"),
+        }
+        # strip Nones
+        norm = {k: v for k, v in norm.items() if v is not None}
+        if not norm:
+            return None, "ai_response has no editable fields (to/subject/body/error)"
+        return norm, None
+
+    return None, "Invalid ai_response type; expected string or object"
+
+@app.route("/edit_ai_response/<email_id>", methods=["POST", "PATCH"])
+def edit_ai_response(email_id):
+    data = request.get_json(silent=True)
+    ai_resp, err = _normalize_ai_response_payload(data)
+    if err:
+        return jsonify({"error": err}), 400
+
+    update = {
+        "ai_response": ai_resp,
+        "status": data.get("status", "Edited"),
+        "updatedAt": datetime.utcnow(),
+    }
+
+    res = emails_collection.update_one({"id": email_id}, {"$set": update})
+    if res.matched_count == 0:
+        return jsonify({"error": "Email not found"}), 404
+
+    return jsonify({
+        "message": f"Edited {email_id} response",
+        "ai_response": ai_resp,
+        "status": update["status"]
+    }), 200
 
 def send_email(recipient, subject, body, token ):
     #token = oauth.token["access_token"]
@@ -447,7 +525,7 @@ def approve_by_category():
 
     return jsonify(results)
 
-
+'''
 @app.route("/approve-emails/batch", methods=["POST"])
 def approve_batch():
     token = oauth.token.get("access_token")
@@ -528,6 +606,220 @@ def approve(email_id):
         email_id=email_id
     )
     return result
+'''
+
+def _normalize_ai_response(raw):
+    """
+    Accepts string or dict; returns {to?, subject?, body?, error?}.
+    """
+    if isinstance(raw, str):
+        return {"body": raw}
+    if isinstance(raw, dict):
+        return {
+            "to": raw.get("to"),
+            "subject": raw.get("subject"),
+            "body": raw.get("body") or raw.get("response"),
+            "error": raw.get("error"),
+        }
+    return {}
+
+def _extract_recipient(email_doc, ai_resp: dict):
+    """
+    Prefer AI-provided 'to'; else use message sender; else replyTo; else None.
+    """
+    # 1) AI override
+    if ai_resp.get("to"):
+        return ai_resp["to"]
+
+    # 2) Original sender
+    try:
+        return email_doc["from"]["emailAddress"]["address"]
+    except Exception:
+        pass
+
+    # 3) replyTo if present
+    try:
+        return email_doc["replyTo"][0]["emailAddress"]["address"]
+    except Exception:
+        pass
+
+    # 4) (Not recommended) fall back to first toRecipients if nothing else
+    try:
+        return email_doc["toRecipients"][0]["emailAddress"]["address"]
+    except Exception:
+        return None
+
+def _extract_subject(email_doc, ai_resp: dict):
+    """
+    Prefer AI subject; else 'Re: <original subject>'.
+    """
+    if ai_resp.get("subject"):
+        return ai_resp["subject"]
+    return f"Re: {email_doc.get('subject', '(no subject)')}"
+
+def _extract_body(ai_resp: dict):
+    """
+    Body is required to send.
+    """
+    return (ai_resp.get("body") or "").strip()
+
+def _get_or_create_folder_id(folder_name: str, token: str):
+    """
+    Use your existing get_folder_id if it returns None/empty, create the folder.
+    """
+    fid = get_folder_id(folder_name, token)
+    if fid:
+        return fid
+
+    # Create folder if it doesn't exist
+    url = "https://graph.microsoft.com/v1.0/me/mailFolders"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    r = requests.post(url, headers=headers, json={"displayName": folder_name})
+    r.raise_for_status()
+    return r.json()["id"]
+
+def _result_ok(res):
+    """
+    Normalize whatever save_email_to_folder returns.
+    Supports: Flask Response, (json, status) tuple, or dict.
+    """
+    # tuple: (Response, status)
+    if isinstance(res, tuple):
+        try:
+            body, status = res
+            if status and int(status) >= 400:
+                return False, getattr(body, "json", lambda: {})().get("error") if hasattr(body, "json") else None
+            data = body.get_json() if hasattr(body, "get_json") else body
+            return bool(data and (data.get("success") or data.get("ok", False))), data.get("error") if isinstance(data, dict) else None
+        except Exception:
+            return False, "Unknown error"
+    # Flask Response
+    if hasattr(res, "get_json"):
+        try:
+            data = res.get_json()
+            return bool(data and (data.get("success") or data.get("ok", False))), data.get("error")
+        except Exception:
+            return False, "Invalid response"
+    # dict
+    if isinstance(res, dict):
+        return bool(res.get("success") or res.get("ok", False)), res.get("error")
+    return False, "Unknown response type"
+
+# --- endpoints ----------------------------------------------
+
+@app.route("/approve-emails/batch", methods=["POST"])
+def approve_batch():
+    token = oauth.token.get("access_token")
+    if not token:
+        return jsonify({"error": "Missing or expired access token"}), 401
+
+    data = request.get_json(silent=True) or {}
+    email_ids = data.get("email_ids") or []
+    if not email_ids:
+        return jsonify({"error": "No email IDs provided"}), 400
+
+    results = {"approved": [], "errors": []}
+
+    for email_id in email_ids:
+        email = emails_collection.find_one({"id": email_id})
+        if not email:
+            results["errors"].append({"id": email_id, "error": "Email not found"})
+            continue
+
+        ai_resp = _normalize_ai_response(email.get("ai_response"))
+        if ai_resp.get("error"):
+            results["errors"].append({"id": email_id, "error": f"AI error: {ai_resp['error']}"})
+            continue
+
+        recipient_email = _extract_recipient(email, ai_resp)
+        if not recipient_email:
+            results["errors"].append({"id": email_id, "error": "No recipient could be determined"})
+            continue
+
+        subject = _extract_subject(email, ai_resp)
+        body = _extract_body(ai_resp)
+        if not body:
+            results["errors"].append({"id": email_id, "error": "AI response body is empty"})
+            continue
+
+        folder_name = email.get("folder") or "AI Replies"
+        try:
+            folder_id = _get_or_create_folder_id(folder_name, token)
+        except Exception as e:
+            results["errors"].append({"id": email_id, "error": f"Folder error: {e}"})
+            continue
+
+        # Now send & save
+        result = save_email_to_folder(
+            folder_id=folder_id,
+            recipient_email=recipient_email,
+            subject=subject,
+            response_text=body,        # <-- body STRING, not the whole object
+            token=token,
+            email_id=email_id
+        )
+
+        ok, err_msg = _result_ok(result)
+        if ok:
+            # mark approved
+            emails_collection.update_one(
+                {"id": email_id},
+                {"$set": {"status": "Approved", "approvedAt": datetime.utcnow()}}
+            )
+            results["approved"].append(email_id)
+        else:
+            results["errors"].append({"id": email_id, "error": err_msg or "Unknown error"})
+
+    return jsonify(results), 200
+
+
+@app.route("/approve-emails/<email_id>", methods=["POST"])
+def approve(email_id):
+    token = oauth.token.get("access_token")
+    if not token:
+        return jsonify({"error": "Missing or expired access token"}), 401
+
+    email = emails_collection.find_one({"id": email_id})
+    if not email:
+        return jsonify({"error": "Email not found"}), 404
+
+    ai_resp = _normalize_ai_response(email.get("ai_response"))
+    if ai_resp.get("error"):
+        return jsonify({"error": f"AI error: {ai_resp['error']}"}), 400
+
+    recipient_email = _extract_recipient(email, ai_resp)
+    if not recipient_email:
+        return jsonify({"error": "No recipient could be determined"}), 400
+
+    subject = _extract_subject(email, ai_resp)
+    body = _extract_body(ai_resp)
+    if not body:
+        return jsonify({"error": "AI response body is empty"}), 400
+
+    folder_name = email.get("folder") or "AI Replies"
+    try:
+        folder_id = _get_or_create_folder_id(folder_name, token)
+    except Exception as e:
+        return jsonify({"error": f"Folder error: {e}"}), 400
+
+    result = save_email_to_folder(
+        folder_id=folder_id,
+        recipient_email=recipient_email,
+        subject=subject,
+        response_text=body,   # <-- body string
+        token=token,
+        email_id=email_id
+    )
+
+    ok, err_msg = _result_ok(result)
+    if not ok:
+        return jsonify({"error": err_msg or "Unknown error"}), 400
+
+    emails_collection.update_one(
+        {"id": email_id},
+        {"$set": {"status": "Approved", "approvedAt": datetime.utcnow()}}
+    )
+    return jsonify({"success": True, "id": email_id}), 200
 
 def find_sent_message(subject, recipient, token):
     url = f"https://graph.microsoft.com/v1.0/me/mailFolders/SentItems/messages?$top=10"

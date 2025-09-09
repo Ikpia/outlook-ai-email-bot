@@ -1,5 +1,20 @@
 import api from "./email-api-client";
 
+export type AiEditPayload =
+  | string
+  | { to?: string; subject?: string; body?: string; error?: string };
+
+export interface EditAiResponseResult {
+  message: string;
+  ai_response: {
+    to?: string | null;
+    subject?: string | null;
+    body?: string | null;
+    error?: string | null;
+  };
+  status: string;
+}
+
 export interface Email {
   id: string;
   subject: string;
@@ -40,10 +55,40 @@ export const approveEmail = async (id: string): Promise<Email> => {
   return response.data;
 };
 
+export const editAiResponse = async (
+  id: string,
+  ai_response: AiEditPayload,
+  opts?: { status?: string; method?: 'POST' | 'PATCH' }
+): Promise<EditAiResponseResult> => {
+  const method = opts?.method ?? 'POST';
+  const payload: Record<string, unknown> = { ai_response };
+  if (opts?.status) payload.status = opts.status;
+
+  try {
+    const res = await api.request({
+      url: `/edit_ai_response/${id}`,
+      method,
+      data: payload,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return res.data as EditAiResponseResult;
+  } catch (err: any) {
+    const msg =
+      err?.response?.data?.error ||
+      err?.response?.data?.message ||
+      err?.message ||
+      'Failed to edit AI response';
+    throw new Error(msg);
+  }
+};
+
+
+/** 
 export const editAiResponse = async (id: string, ai_response: string) => {
   const response = await api.post(`/edit_ai_response/${id}`, { ai_response });
   return response.data;
 };
+*/
 
 export const response = async (respond: Respond) => {
   const response = await api.post(`/respond`, respond);
