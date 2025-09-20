@@ -165,15 +165,15 @@ def respond():
     category = data.get("category")
     folder = data.get("folder")
     #name = data.get("name")
-    '''token = oauth.token.get("access_token")
+    token = oauth.token.get("access_token")
     if not token:
-        return {"error": "Missing or expired access token"}'''
+        return {"error": "Missing or expired access token"}
     #response = send_scheduled_responses(category, folder, name)
-    response = send_scheduled_responses(category, folder)
+    response = send_scheduled_responses(category, folder, token)
     return jsonify({"message": response}), 201
 
 
-def send_scheduled_responses(category, folder):
+def send_scheduled_responses(category, folder, token):
     """Send responses at their scheduled time."""
     approved_emails = emails_collection.find({"category": {"category": category}, "status": "Categorized"})
     approved_emails_list = list(approved_emails)
@@ -201,8 +201,12 @@ def send_scheduled_responses(category, folder):
             response_dict = response_obj.dict()
 
         # Decide status based on error
-        status = "Failed" if response_dict.get("error") else "Responded"
-
+        status = None
+        if response_dict.get("error"):
+            status = "Hold"
+            send_email("ibikunleadekiitan@gmail.com", "Holding Mail", f"There's an issue with this mail {body_content}", token)
+        else:
+            status = "Responded"
         emails_collection.update_one(
             {"id": email["id"]},
             {"$set": {
