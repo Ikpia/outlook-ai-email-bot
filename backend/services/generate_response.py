@@ -43,11 +43,6 @@ db_clients = mongo_client.get_database("companyData")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@company.com")
 
 # --------------------
-# FASTAPI APP
-# --------------------
-#app = FastAPI()
-
-# --------------------
 # LOAD JSON TEMPLATES
 # --------------------
 with open("datasets_combined.json", "r", encoding="utf-8") as f:
@@ -287,7 +282,6 @@ def fill_template_placeholders(template_content: str, client_record: dict):
 # --------------------
 # MODELS
 # --------------------
-'''
 class EmailRequest(BaseModel):
     text: str
 
@@ -298,18 +292,7 @@ class EmailResponse(BaseModel):
     subject: Optional[str] = None
     body: Optional[str] = None
     error: Optional[str] = None
-'''
 
-class EmailRequest(BaseModel):
-    text: str
-
-from typing import Optional
-
-class EmailResponse(BaseModel):
-    to: Optional[str] = None
-    subject: Optional[str] = None
-    body: Optional[str] = None
-    error: Optional[str] = None
 
 def generate_email_response(req: EmailRequest):
     print(f"[DEBUG] Prompt: {req.text}")
@@ -337,7 +320,19 @@ def generate_email_response(req: EmailRequest):
 
 
     templates = get_template_catalog()
-    matched_template = select_template_llm(req.text, client_record, templates)
+    # Filter templates to those where all placeholders are present in client_record
+    def can_fill_all_placeholders(template, record):
+        return all(
+            any(key.lower() == ph.lower() for key in record.keys())
+            for ph in template["placeholders"]
+        )
+
+    fillable_templates = [t for t in templates if can_fill_all_placeholders(t, client_record)]
+    if not fillable_templates:
+        print("[DEBUG] No template can be fully filled, falling back to all templates.")
+        fillable_templates = templates
+
+    matched_template = select_template_llm(req.text, client_record, fillable_templates)
     if not matched_template:
         return EmailResponse(error="No suitable template found")
 
@@ -348,7 +343,6 @@ def generate_email_response(req: EmailRequest):
 
     # ✅ Debug final output
     print(f"[DEBUG] Final filled email body:\n{filled_body}\n")
-    
 
     return EmailResponse(
         to=client_record.get("Email", ADMIN_EMAIL),
@@ -356,6 +350,7 @@ def generate_email_response(req: EmailRequest):
         body=filled_body,
         error=None
     )
+
 '''
 prompt = {
   "text": "My ID is ID-1026 can you give me more information on my test? Many thanks."
@@ -364,10 +359,3 @@ prompt = {
 
 #"Can you please give me the information for the vehicle with a VIN: HQ0S3U42R8K7FOYPP Many thanks, Bob"
 #print(generate_email_response(EmailRequest(**prompt)))
-
-# --------------------
-# RUN APP
-# --------------------
-#if __name__ == "__main__":
-#    import uvicorn
-#    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
