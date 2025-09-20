@@ -25,8 +25,12 @@ import {
   approveBatch as apiApproveBatch,
 } from '../services/email';
 
-interface AIResponse {
-  response: string;
+// ---- Types ----
+export interface AIResponse {
+  to?: string | null;
+  subject?: string | null;
+  body?: string | null;
+  error?: string | null;
 }
 
 export interface Email {
@@ -37,7 +41,25 @@ export interface Email {
   category: string;
   date: string;
   status: string;
-  ai_response: AIResponse | string;
+  ai_response: AIResponse;
+}
+
+// ---- Helpers ----
+function normalizeAiResp(raw: unknown): AIResponse {
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>;
+    return {
+      to: (r.to as string) ?? null,
+      subject: (r.subject as string) ?? null,
+      body: (r.body as string) ?? (r.response as string) ?? null, // support legacy {response}
+      error: (r.error as string) ?? null,
+    };
+  }
+  if (typeof raw === 'string') {
+    // legacy plain text or "Pending"
+    return { body: raw };
+  }
+  return { body: 'PENDING' };
 }
 
 function EmailPage() {
@@ -54,21 +76,22 @@ function EmailPage() {
 
   useEffect(() => {
     fetchEmails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchEmails = async () => {
     try {
       const resp = await getEmails();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formatted = resp.map((e: any) => ({
+      const formatted: Email[] = resp.map((e: any) => ({
         id: e.id,
         subject: e.subject,
-        body: e.body.content,
-        sender: e.sender.emailAddress.name,
+        body: e.body?.content ?? '',
+        sender: e.sender?.emailAddress?.name ?? e.sender?.emailAddress?.address ?? 'Unknown',
         category: typeof e.category === 'object' ? e.category.category : e.category,
         date: new Date(e.receivedDateTime).toLocaleDateString(),
         status: e.status,
-        ai_response: e.ai_response || 'Pending',
+        ai_response: normalizeAiResp(e.ai_response || 'PENDING'),
       }));
       setEmails(formatted);
     } catch (err) {
@@ -77,9 +100,7 @@ function EmailPage() {
   };
 
   const handleEditClick = (email: Email) => {
-    setEditResponseText(
-      typeof email.ai_response === 'object' ? email.ai_response.response : email.ai_response
-    );
+    setEditResponseText(email.ai_response.body || '');
     setEditingEmailId(email.id);
     setEditDialogOpen(true);
   };
@@ -87,10 +108,13 @@ function EmailPage() {
   const handleSaveEdit = async () => {
     if (!editingEmailId) return;
     try {
-      await editAiResponse(editingEmailId, editResponseText);
-      setEmails((prev) =>
-        prev.map((e) =>
-          e.id === editingEmailId ? { ...e, ai_response: editResponseText } : e
+      // Backend accepts either string (body only) or object
+      const res = await editAiResponse(editingEmailId, editResponseText);
+      const newAi = normalizeAiResp(res?.ai_response ?? { body: editResponseText });
+
+      setEmails(prev =>
+        prev.map(e =>
+          e.id === editingEmailId ? { ...e, ai_response: newAi, status: res?.status ?? e.status } : e
         )
       );
       setEditDialogOpen(false);
@@ -103,12 +127,13 @@ function EmailPage() {
 
   const handleDelete = async (id: string) => {
     await deleteEmail(id);
-    setEmails((prev) => prev.filter((e) => e.id !== id));
+    setEmails(prev => prev.filter(e => e.id !== id));
+    setSelectedEmailIds(prev => prev.filter(x => x !== id));
   };
 
   const handleApprove = async (id: string) => {
     const resp = await approveEmail(id);
-    setEmails((prev) => prev.map((e) => (e.id === id ? { ...e, status: resp.status } : e)));
+    setEmails(prev => prev.map(e => (e.id === id ? { ...e, status: resp.status } : e)));
   };
 
   const handleReject = async () => {
@@ -139,10 +164,8 @@ function EmailPage() {
   };
 
   const handleApproveCategory = async () => {
-    console.log(approveCategory)
     if (!approveCategory) return;
     setLoading(true);
-    console.log(approveCategory)
     await apiApproveByCategory(approveCategory);
     await fetchEmails();
     setApproveCategory('');
@@ -150,18 +173,15 @@ function EmailPage() {
   };
 
   const handleCheckboxChange = (id: string) => {
-    setSelectedEmailIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setSelectedEmailIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
   };
 
   const handleSelectAll = (checked: boolean) => {
-    setSelectedEmailIds(checked ? emails.map((e) => e.id) : []);
+    setSelectedEmailIds(checked ? emails.map(e => e.id) : []);
   };
 
   const isAllSelected = emails.length > 0 && selectedEmailIds.length === emails.length;
-
-  const truncate = (text: string, n: number) => (text.length > n ? text.slice(0, n) + '…' : text);
+  const truncate = (text: string, n: number) => (text && text.length > n ? text.slice(0, n) + '…' : text || '');
 
   return (
     <div style={{ padding: 16 }}>
@@ -175,39 +195,61 @@ function EmailPage() {
           control={
             <Checkbox
               checked={isAllSelected}
-              onChange={(e) => handleSelectAll(e.target.checked)}
+              onChange={e => handleSelectAll(e.target.checked)}
               sx={{ color: 'white' }}
             />
           }
           label="Select All"
         />
-        <Button variant="contained" color="primary" onClick={handleApproveSelected} disabled={loading || !selectedEmailIds.length} sx={{ mr: 1 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleApproveSelected}
+          disabled={loading || !selectedEmailIds.length}
+          sx={{ mr: 1 }}
+        >
           Approve Selected
         </Button>
-        <Button variant="contained" color="error" onClick={handleReject} disabled={loading || !selectedEmailIds.length} sx={{ mr: 1 }}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleReject}
+          disabled={loading || !selectedEmailIds.length}
+          sx={{ mr: 1 }}
+        >
           Reject Selected
         </Button>
-        <Button variant="contained" onClick={handleFlag} disabled={loading || !selectedEmailIds.length} sx={{ mr: 1 }}>
+        <Button
+          variant="contained"
+          onClick={handleFlag}
+          disabled={loading || !selectedEmailIds.length}
+          sx={{ mr: 1 }}
+        >
           Flag Selected
         </Button>
         <TextField
           placeholder="Category"
           value={approveCategory}
-          onChange={(e) => setApproveCategory(e.target.value)}
+          onChange={e => setApproveCategory(e.target.value)}
           size="small"
           sx={{ ml: 2, bgcolor: 'white', borderRadius: 1 }}
         />
-        <Button variant="contained" onClick={handleApproveCategory} disabled={loading || !approveCategory} sx={{ ml: 1 }}>
+        <Button
+          variant="contained"
+          onClick={handleApproveCategory}
+          disabled={loading || !approveCategory}
+          sx={{ ml: 1 }}
+        >
           Approve by Category
         </Button>
       </div>
 
       {/* Email Cards */}
       <Grid container spacing={3}>
-        {emails.map((email) => (
+        {emails.map(email => (
           <Grid key={email.id}>
-            <Card sx={{ bgcolor: '#333', color: 'white' }}>
-              <CardContent>
+            <Card sx={{ bgcolor: '#333', color: 'white', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <CardContent sx={{ flexGrow: 1 }}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -218,19 +260,45 @@ function EmailPage() {
                   }
                   label="Select"
                 />
-                <Typography variant="h6">{truncate(email.subject, 50)}</Typography>
-                <Typography variant="body2">{truncate(email.body, 200)}</Typography>
+                <Typography variant="h6">{truncate(email.subject, 80)}</Typography>
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {truncate(email.body, 200)}
+                </Typography>
+
                 <Typography variant="subtitle2" color="gray">
                   From: {email.sender}
                 </Typography>
                 <Typography variant="subtitle2" color="gray">
                   Category: {email.category}
                 </Typography>
-                <Typography variant="subtitle2" color="gray">
-                  AI: {typeof email.ai_response === 'object'
-                    ? email.ai_response.response
-                    : email.ai_response}
-                </Typography>
+
+                {/* AI Summary */}
+                {email.ai_response.error ? (
+                  <Typography variant="subtitle2" color="error">
+                    AI Error: {email.ai_response.error}
+                  </Typography>
+                ) : (
+                  <>
+                    {email.ai_response.subject && (
+                      <Typography variant="subtitle2" color="gray">
+                        AI Subject: {truncate(email.ai_response.subject, 80)}
+                      </Typography>
+                    )}
+                    {email.ai_response.to && (
+                      <Typography variant="subtitle2" color="gray">
+                        AI To: {email.ai_response.to}
+                      </Typography>
+                    )}
+                    {email.ai_response.body ? (
+                      <Typography variant="body2" color="gray" sx={{ whiteSpace: 'pre-wrap' }}>
+                        {truncate(email.ai_response.body, 200)}
+                      </Typography>
+                    ) : (
+                      <Typography variant="subtitle2" color="gray">AI: PENDING</Typography>
+                    )}
+                  </>
+                )}
+
                 <Typography variant="subtitle2" color="gray">
                   Date: {email.date}
                 </Typography>
@@ -258,22 +326,31 @@ function EmailPage() {
       </Grid>
 
       {/* Email Details Dialog */}
-      <Dialog open={!!selectedEmail} onClose={() => setSelectedEmail(null)}>
+      <Dialog open={!!selectedEmail} onClose={() => setSelectedEmail(null)} fullWidth maxWidth="md">
         <DialogTitle>Email Details</DialogTitle>
         <DialogContent dividers>
           {selectedEmail && (
             <>
-              <Typography variant="h6">{selectedEmail.subject}</Typography>
-              <Typography paragraph>{selectedEmail.body}</Typography>
-              <Typography variant="body2">From: {selectedEmail.sender}</Typography>
-              <Typography variant="body2">Category: {selectedEmail.category}</Typography>
-              <Typography variant="body2">
-                AI RESPONSE: {typeof selectedEmail.ai_response === 'object'
-                  ? selectedEmail.ai_response.response
-                  : selectedEmail.ai_response || "PENDING"}
-              </Typography>
-              <Typography variant="body2">Date: {selectedEmail.date}</Typography>
-              <Typography variant="body2">Status: {selectedEmail.status}</Typography>
+              <Typography variant="h6" gutterBottom>{selectedEmail.subject}</Typography>
+              <Typography paragraph sx={{ whiteSpace: 'pre-wrap' }}>{selectedEmail.body}</Typography>
+
+              <Typography variant="body2" gutterBottom>From: {selectedEmail.sender}</Typography>
+              <Typography variant="body2" gutterBottom>Category: {selectedEmail.category}</Typography>
+
+              <Typography variant="subtitle1" gutterBottom>AI RESPONSE</Typography>
+              <Typography variant="body2" gutterBottom><strong>AI To:</strong> {selectedEmail.ai_response.to || selectedEmail.sender || '—'}</Typography>
+              <Typography variant="body2" gutterBottom><strong>AI Subject:</strong> {selectedEmail.ai_response.subject || selectedEmail.subject || '—'}</Typography>
+
+              {selectedEmail.ai_response.error ? (
+                <Typography variant="body2" color="error"><strong>Error:</strong> {selectedEmail.ai_response.error}</Typography>
+              ) : (
+                <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
+                  <strong>AI RESPONSE: </strong> {selectedEmail.ai_response.body || 'PENDING'}
+                </Typography>
+              )}
+
+              <Typography variant="body2" gutterBottom>Date: {selectedEmail.date}</Typography>
+              <Typography variant="body2" gutterBottom>Status: {selectedEmail.status}</Typography>
             </>
           )}
         </DialogContent>
@@ -283,15 +360,16 @@ function EmailPage() {
       </Dialog>
 
       {/* Edit AI Response Dialog */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>Edit AI Response</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
             multiline
-            rows={4}
+            rows={6}
             value={editResponseText}
-            onChange={(e) => setEditResponseText(e.target.value)}
+            onChange={e => setEditResponseText(e.target.value)}
+            placeholder="Edit AI-generated email body..."
           />
         </DialogContent>
         <DialogActions>
